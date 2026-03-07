@@ -4,6 +4,7 @@ import useAxiosSecure from '../../hooks/useAxiosSecure'
 
 const RoleRequestModal = ({ isOpen, onClose, role }) => {
   const { user } = useAuth()
+  console.log('User in RoleRequestModal:', user) // Debugging line
   const axiosSecure = useAxiosSecure()
   if (!isOpen) return null
 
@@ -16,6 +17,7 @@ const RoleRequestModal = ({ isOpen, onClose, role }) => {
     const requestData = {
       chefName: user.displayName,
       userEmail: user.email,
+      image: user.photoURL,
       requestStatus: 'pending',
       requestType: role.toLowerCase(), 
       requestTime: new Date().toISOString(),

@@ -46,7 +46,7 @@ const AddFoodForm = () => {
       chefId,
       foodImageFile,
     } = data;
-
+console.log(data)
     if (!foodImageFile || !foodImageFile[0]) {
       toast.error("Please upload a food image",);
       return;
@@ -86,7 +86,7 @@ const AddFoodForm = () => {
   };
 
   if (isLoading) return <LoadingSpinner></LoadingSpinner>
-  console.log(userData)
+  console.log(userData.result.chefId)
 
   return (
     <div className="min-h-screen bg-linear-to-b from-slate-900 to-slate-800 text-white py-16">
@@ -186,8 +186,8 @@ const AddFoodForm = () => {
                 type="text"
                 className="w-full px-6 py-4 cursor-not-allowed bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
                 readOnly
-                value={userData?.chefId || ""}
-                {...register("chefId", { required: true })}
+                value={userData.result?.chefId || ""}
+                {...register("chefId", { required: false })}
               />
               {errors.chefId && <p className="text-red-400 text-sm">{errors.chefId.message}</p>}
             </div>

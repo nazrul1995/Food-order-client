@@ -19,6 +19,8 @@ import OrderForm from '../components/Form/OrderForm'
 import PaymentHistory from '../pages/Payment/PaymentHistory'
 import MyCreatedMeals from '../pages/Dashboard/Seller/MyCreatedMeals'
 import AllMeals from '../pages/AllMeals/AllMeals'
+import AllChefs from '../pages/Chefs/AllChefs'
+import ChefDetails from '../pages/Chefs/ChefDetails'
 import CustomerReviewDataRow from '../components/Dashboard/TableRows/CustomerReviewDataRow'
 import FavoriteMeals from '../components/Dashboard/TableRows/CustomerFavoriteData'
 import ManageRequests from '../pages/Dashboard/Admin/ManageRequests'
@@ -43,6 +45,14 @@ export const router = createBrowserRouter([
         element: <PrivateRoute>
           <MealDetails />
         </PrivateRoute>
+      },
+      {
+        path: '/chefs',
+        element: <AllChefs />,
+      },
+      {
+        path: '/chef/:id',
+        element: <ChefDetails />,
       },
       {
         path: '/payment-success',

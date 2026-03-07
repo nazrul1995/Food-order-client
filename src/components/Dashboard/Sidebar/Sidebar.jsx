@@ -33,23 +33,27 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Small Screen Navbar, only visible till md breakpoint */}
-      <div className='bg-gray-100 text-gray-800 flex justify-between md:hidden'>
-        <div>
-          <div className='block cursor-pointer p-4 font-bold'>
-            <Link to='/'>
-              <img src={logo} alt='logo' width='100' height='100' />
-            </Link>
-          </div>
-        </div>
+      {/* Small Screen Navbar (visible below md) */}
+<div className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/90 backdrop-blur border-b border-lime-500/20 text-white">
 
-        <button
-          onClick={handleToggle}
-          className='mobile-menu-button p-4 focus:outline-none focus:bg-gray-200'
-        >
-          <AiOutlineBars className='h-5 w-5' />
-        </button>
-      </div>
+  {/* Logo */}
+  <Link to="/" className="flex items-center gap-2">
+    <img
+      src={logo}
+      alt="logo"
+      className="w-28 object-contain"
+    />
+  </Link>
+
+  {/* Menu Button */}
+  <button
+    onClick={handleToggle}
+    className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 transition focus:outline-none"
+  >
+    <AiOutlineBars className="h-6 w-6 text-lime-400" />
+  </button>
+</div>
+
 
       {/* Sidebar */}
       <div

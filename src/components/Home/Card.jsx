@@ -1,58 +1,57 @@
 /* eslint-disable no-unused-vars */
-import { Link } from 'react-router';
-import { TbStarFilled, TbHeart, TbHeartFilled } from 'react-icons/tb';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import useAuth from '../../hooks/useAuth';
+import { Link } from "react-router";
+import { TbStarFilled, TbHeart, TbHeartFilled, TbMapPin } from "react-icons/tb";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import useAuth from "../../hooks/useAuth";
 
 const Card = ({ meal }) => {
   const { user } = useAuth();
+
   const {
     _id,
     foodName,
     chefName,
     foodImage,
     price,
-    averageRating = 0, 
+    averageRating = 0,
     deliveryArea = [],
   } = meal || {};
 
   const [favorited, setFavorited] = useState(false);
 
-  
   const numericRating = Number(averageRating) || 0;
   const fullStars = Math.floor(numericRating);
-  const hasHalfStar = numericRating % 1 >= 0.5; 
 
   return (
     <motion.div
-      whileHover={{ y: -8, transition: { duration: 0.3 } }}
-      className="group relative bg-slate-900 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300"
+      whileHover={{ y: -10, scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+      className="group relative bg-slate-900/80 backdrop-blur-md border border-slate-700 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all"
     >
-      {/* Image Container */}
-      <div className="relative overflow-hidden">
+      {/* Image */}
+      <div className="relative h-56 overflow-hidden">
         <img
           src={foodImage}
           alt={foodName}
-          className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
         />
 
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80"></div>
 
-        {/* Rating Badge on Image */}
-        <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-black/70 px-3 py-1.5 rounded-full text-white text-sm font-medium">
-          <TbStarFilled className="text-yellow-400 text-base" />
-          <span>{numericRating.toFixed(1)}</span>
+        {/* Price badge */}
+        <div className="absolute bottom-4 left-4 bg-lime-400 text-black font-bold px-4 py-1 rounded-full text-sm shadow">
+          ${price}
         </div>
 
-        {/* Favorite Button */}
+        {/* Favorite */}
         <button
           onClick={(e) => {
             e.preventDefault();
             setFavorited(!favorited);
           }}
-          className="absolute top-4 right-4 p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors"
-          aria-label="Add to favorites"
+          className="absolute top-4 right-4 p-2 bg-black/50 rounded-full text-white backdrop-blur hover:bg-black/70 transition"
         >
           {favorited ? (
             <TbHeartFilled className="text-red-500 text-xl" />
@@ -62,43 +61,45 @@ const Card = ({ meal }) => {
         </button>
       </div>
 
-      {/* Card Body */}
-      <div className="p-6">
-        <h3 className="text-xl font-semibold text-white truncate">{foodName}</h3>
-        <p className="text-gray-400 text-sm mt-1">by {chefName}</p>
+      {/* Content */}
+      <div className="p-5">
+        <h3 className="text-xl font-semibold text-white truncate">
+          {foodName}
+        </h3>
 
-        {/* Visual Star Rating */}
+        <p className="text-gray-400 text-sm mt-1">
+          Chef <span className="text-gray-300">{chefName}</span>
+        </p>
+
+        {/* Rating */}
         <div className="flex items-center gap-1 mt-3">
-          {Array.from({ length: 5 }, (_, i) => (
+          {Array.from({ length: 5 }).map((_, i) => (
             <TbStarFilled
               key={i}
               className={`text-lg ${
-                i < fullStars
-                  ? 'text-yellow-400'
-                  : 'text-gray-600'
+                i < fullStars ? "text-yellow-400" : "text-gray-600"
               }`}
             />
           ))}
-          <span className="text-gray-400 text-sm ml-2">({numericRating.toFixed(1)})</span>
+          <span className="text-gray-400 text-sm ml-2">
+            {numericRating.toFixed(1)}
+          </span>
         </div>
 
         {/* Delivery Area */}
         {deliveryArea.length > 0 && (
-          <p className="text-gray-500 text-sm mt-3">
-            Delivery: <span className="text-gray-300">{deliveryArea.join(', ')}</span>
-          </p>
+          <div className="flex items-center gap-2 text-gray-400 text-sm mt-3">
+            <TbMapPin className="text-orange-400" />
+            <span className="truncate">{deliveryArea.join(", ")}</span>
+          </div>
         )}
 
-        {/* Price & Button */}
-        <div className="flex items-center justify-between mt-6">
-          <p className="text-3xl font-bold text-lime-400">${price}</p>
-
-          <Link to={`/meals/${_id}`}>
-            <button className="px-6 py-3 bg-lime-500 text-black font-medium rounded-full hover:bg-lime-400 transition-colors">
-              View Details
-            </button>
-          </Link>
-        </div>
+        {/* Button */}
+        <Link to={`/meals/${_id}`}>
+          <button className="w-full mt-5 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium hover:from-orange-400 hover:to-red-400 transition">
+            View Details
+          </button>
+        </Link>
       </div>
     </motion.div>
   );

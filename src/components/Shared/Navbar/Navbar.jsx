@@ -9,26 +9,31 @@ import logo from '../../../assets/images/local-logo.png'
 const Navbar = () => {
   const { user, logOut } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
-
+  const links = <>
+    <Link to='/' className='hover:text-lime-400 transition'>
+      Home
+    </Link>
+    <Link to='/meals' className='hover:text-lime-400 transition'>
+      Meals
+    </Link>
+    <Link to='/chefs' className='hover:text-lime-400 transition'>
+      Chefs
+    </Link>
+  </>
   return (
-    <div className='fixed w-full bg-slate-800/90 backdrop-blur-md z-10 shadow-lg border-b border-slate-700'>
+    <div className='fixed w-full bg-slate-800/90 backdrop-blur-md z-20 shadow-lg border-b border-slate-700'>
       <div className='py-4'>
         <Container>
           <div className='flex items-center justify-between'>
 
             {/* Logo */}
             <Link to='/'>
-              <img src={logo} alt='logo' className='w-15 h-15 rounded-2xl'/>
+              <img src={logo} alt='logo' className='w-15 h-15 rounded-2xl' />
             </Link>
 
             {/* Desktop Menu */}
             <div className='hidden md:flex gap-8 font-semibold text-gray-300'>
-              <Link to='/' className='hover:text-lime-400 transition'>
-                Home
-              </Link>
-              <Link to='/meals' className='hover:text-lime-400 transition'>
-                Meals
-              </Link>
+              {links}
             </div>
 
             {/* Profile Dropdown */}

@@ -6,138 +6,102 @@ import { FcGoogle } from 'react-icons/fc'
 import { TbFidgetSpinner } from 'react-icons/tb'
 
 const Login = () => {
-  const { signIn, signInWithGoogle, loading, user, setLoading } = useAuth()
+  const { signIn, loading, user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
   const from = location.state || '/'
 
   if (loading) return <LoadingSpinner />
-  if (user) return <Navigate to={from} replace={true} />
+  if (user) return <Navigate to={from} replace />
 
-  // form submit handler
-  const handleSubmit = async event => {
-    event.preventDefault()
-    const form = event.target
+  const handleSubmit = async e => {
+    e.preventDefault()
+    const form = e.target
     const email = form.email.value
     const password = form.password.value
 
     try {
-      //User Login
       await signIn(email, password)
-
       navigate(from, { replace: true })
       toast.success('Login Successful')
     } catch (err) {
-      console.log(err)
       toast.error(err?.message)
     }
   }
 
-  // Handle Google Signin
-  const handleGoogleSignIn = async () => {
-    try {
-      //User Registration using google
-      await signInWithGoogle()
-      navigate(from, { replace: true })
-      toast.success('Login Successful')
-    } catch (err) {
-      console.log(err)
-      setLoading(false)
-      toast.error(err?.message)
-    }
-  }
   return (
-    <div className='flex justify-center items-center min-h-screen bg-white'>
-      <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
-        <div className='mb-8 text-center'>
-          <h1 className='my-3 text-4xl font-bold'>Log In</h1>
-          <p className='text-sm text-gray-400'>
-            Sign in to access your account
+    <div className="min-h-screen bg-linear-to-b from-slate-900 to-slate-800 flex items-center justify-center relative text-white">
+    
+      <div className="w-full max-w-md bg-slate-800/80 backdrop-blur-xl rounded-3xl p-8 border border-lime-500/20 shadow-2xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold">Welcome Back</h1>
+          <p className="text-gray-400 mt-2">
+            Login to continue your journey
           </p>
         </div>
-        <form
-          onSubmit={handleSubmit}
-          noValidate=''
-          action=''
-          className='space-y-6 ng-untouched ng-pristine ng-valid'
-        >
-          <div className='space-y-4'>
-            <div>
-              <label htmlFor='email' className='block mb-2 text-sm'>
-                Email address
-              </label>
-              <input
-                type='email'
-                name='email'
-                id='email'
-                required
-                placeholder='Enter Your Email Here'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
-                data-temp-mail-org='0'
-              />
-            </div>
-            <div>
-              <div className='flex justify-between'>
-                <label htmlFor='password' className='text-sm mb-2'>
-                  Password
-                </label>
-              </div>
-              <input
-                type='password'
-                name='password'
-                autoComplete='current-password'
-                id='password'
-                required
-                placeholder='*******'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
-              />
-            </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="text-sm text-gray-400">Email</label>
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="you@example.com"
+              className="w-full mt-2 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:border-lime-400 focus:outline-none text-white"
+            />
           </div>
 
           <div>
-            <button
-              type='submit'
-              className='bg-lime-500 w-full rounded-md py-3 text-white'
-            >
-              {loading ? (
-                <TbFidgetSpinner className='animate-spin m-auto' />
-              ) : (
-                'Continue'
-              )}
-            </button>
+            <label className="text-sm text-gray-400">Password</label>
+            <input
+              type="password"
+              name="password"
+              required
+              placeholder="••••••••"
+              className="w-full mt-2 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:border-lime-400 focus:outline-none text-white"
+            />
           </div>
+
+          <button
+            type="submit"
+            className="w-full py-3 rounded-xl bg-lime-500 text-black font-bold text-lg hover:bg-lime-400 transition shadow-lg"
+          >
+            {loading ? (
+              <TbFidgetSpinner className="animate-spin m-auto" />
+            ) : (
+              'Login'
+            )}
+          </button>
         </form>
-        <div className='space-y-1'>
-          <button className='text-xs hover:underline hover:text-lime-500 text-gray-400 cursor-pointer'>
+
+        {/* Forgot password */}
+        <div className="text-right mt-2">
+          <button className="text-sm text-gray-400 hover:text-lime-400">
             Forgot password?
           </button>
         </div>
-        <div className='flex items-center pt-4 space-x-1'>
-          <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
-          <p className='px-3 text-sm dark:text-gray-400'>
-            Login with social accounts
-          </p>
-          <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
-        </div>
-        <div
-          onClick={handleGoogleSignIn}
-          className='flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'
-        >
-          <FcGoogle size={32} />
 
-          <p>Continue with Google</p>
+        {/* Divider */}
+        <div className="flex items-center my-6">
+          <div className="flex-1 h-px bg-slate-700"></div>
+          <p className="px-3 text-sm text-gray-400">OR</p>
+          <div className="flex-1 h-px bg-slate-700"></div>
         </div>
-        <p className='px-6 text-sm text-center text-gray-400'>
-          Don&apos;t have an account yet?{' '}
+
+        {/* Signup */}
+        <p className="text-center text-sm text-gray-400 mt-6">
+          Don’t have an account?{' '}
           <Link
+            to="/signup"
             state={from}
-            to='/signup'
-            className='hover:underline hover:text-lime-500 text-gray-600'
+            className="text-lime-400 hover:underline"
           >
             Sign up
           </Link>
-          .
         </p>
       </div>
     </div>

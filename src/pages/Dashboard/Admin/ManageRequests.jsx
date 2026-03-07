@@ -9,6 +9,7 @@ const ManageRequests = () => {
   const { user } = useAuth()
   const axiosSecure = useAxiosSecure()
   const [processedRequests, setProcessedRequests] = useState([])
+  console.log('User in ManageRequests:', user) // Debugging line
 
   // Fetch role requests
   const {
@@ -41,6 +42,8 @@ const ManageRequests = () => {
       await axiosSecure.patch(`/role-requests/approve/${req._id}`, {
         userEmail: req.userEmail,
         role: req.requestType,
+        photoUrl: req.image,
+        name: req.chefName,
       })
 
       Swal.fire('Approved!', 'User role updated.', 'success')

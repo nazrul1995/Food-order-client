@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import coverImg from '../../../assets/images/mutton.webp'
-import Swal from 'sweetalert2'
 import useAuth from '../../../hooks/useAuth'
 import Container from '../../../components/Shared/Container'
 import useRole from '../../../hooks/useRole'
@@ -16,9 +15,17 @@ const Profile = () => {
 
   if (isRoleLoading) return <LoadingSpinner />
 
-  const { address, email, name, role, status } = userData || {}
+  // ✅ Correct destructuring from userData.result
+  const {
+    name,
+    email,
+    role,
+    status,
+    address,
+    chefId,
+  } = userData?.result || {}
 
-  const handleOpenModal = (roleName) => {
+  const handleOpenModal = roleName => {
     setSelectedRole(roleName)
     setIsModalOpen(true)
   }
@@ -30,13 +37,13 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-slate-900 via-slate-800 to-slate-700 text-white relative overflow-hidden">
-      {/* Background Blobs */}
+      {/* Background blobs */}
       <div className="absolute top-20 right-10 w-96 h-96 bg-lime-500 rounded-full opacity-20 blur-3xl -z-10"></div>
       <div className="absolute bottom-40 left-0 w-80 h-80 bg-lime-400 rounded-full opacity-30 blur-3xl -z-10"></div>
 
       <Container>
         <div className="py-16 flex justify-center">
-          <div className="bg-gray-900 bg-opacity-70 rounded-3xl shadow-2xl overflow-hidden w-full border border-lime-500/30">
+          <div className="bg-gray-900/70 rounded-3xl shadow-2xl overflow-hidden w-full border border-lime-500/30">
 
             {/* Cover */}
             <div className="relative">
@@ -54,38 +61,47 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Info */}
+            {/* Profile Info */}
             <div className="mt-20 px-8 pb-8">
               <div className="text-center space-y-3">
                 <h2 className="text-3xl font-extrabold">
-                  {user?.displayName || name}
+                  {user?.displayName || name || 'User'}
                 </h2>
 
-                <p className="text-gray-300">{user?.email || email}</p>
+                <p className="text-gray-300">
+                  {user?.email || email}
+                </p>
 
-                <span className="px-4 py-1 bg-gradient-to-r from-lime-500 to-lime-400 text-black rounded-full font-semibold inline-block">
+                <span className="px-4 py-1 bg-gradient-to-r from-lime-500 to-lime-400 text-black rounded-full font-semibold inline-block capitalize">
                   {role}
                 </span>
 
                 <p className="text-gray-400">
-                  Status: <span className="text-white">{status || 'active'}</span>
+                  Status:{' '}
+                  <span className="text-white">
+                    {status || 'active'}
+                  </span>
                 </p>
 
                 {role === 'chef' && (
                   <p className="text-gray-400">
-                    Chef Id: <span className="text-white">{userData?.chefId || 'N/A'}</span>
+                    Chef ID:{' '}
+                    <span className="text-white">
+                      {chefId || 'N/A'}
+                    </span>
                   </p>
                 )}
 
                 <p className="text-gray-400">
-                  Address: <span className="text-white">{address || 'N/A'}</span>
+                  Address:{' '}
+                  <span className="text-white">
+                    {address || 'N/A'}
+                  </span>
                 </p>
               </div>
 
-              {/* Role Buttons */}
+              {/* Role Action Buttons */}
               <div className="mt-8 flex justify-center gap-6 flex-wrap">
-
-                {/* Be a Chef */}
                 {role !== 'chef' && role !== 'admin' && (
                   <button
                     onClick={() => handleOpenModal('chef')}
@@ -95,7 +111,6 @@ const Profile = () => {
                   </button>
                 )}
 
-                {/* Be an Admin */}
                 {role !== 'admin' && (
                   <button
                     onClick={() => handleOpenModal('admin')}
@@ -104,14 +119,13 @@ const Profile = () => {
                     Be an Admin
                   </button>
                 )}
-
               </div>
             </div>
           </div>
         </div>
       </Container>
 
-      {/* Modal */}
+      {/* Role Request Modal */}
       <RoleRequestModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
