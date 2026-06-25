@@ -6,11 +6,11 @@ The platform includes role-based dashboards (Admin, Chef, User), real-time order
 
 🚀 Live Project
 
-🔗 Live Site: https://chef-client-pi.vercel.app
+🔗 Live Site: https://your-live-link.com
 
-🔗 Client Repository: https://github.com/nazrul1995/chef-bazar-frontend
+🔗 Client Repository: https://github.com/yourusername/localchefbazaar-client
 
-🔗 Server Repository: https://github.com/nazrul1995/Chef-Bazar-server
+🔗 Server Repository: https://github.com/yourusername/localchefbazaar-server
 
 🎯 Project Purpose
 

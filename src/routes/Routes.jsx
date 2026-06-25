@@ -24,6 +24,7 @@ import ChefDetails from '../pages/Chefs/ChefDetails'
 import CustomerReviewDataRow from '../components/Dashboard/TableRows/CustomerReviewDataRow'
 import FavoriteMeals from '../components/Dashboard/TableRows/CustomerFavoriteData'
 import ManageRequests from '../pages/Dashboard/Admin/ManageRequests'
+import ManageFoods from '../pages/Dashboard/Admin/ManageFoods'
 
 
 export const router = createBrowserRouter([
@@ -87,10 +88,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'my-created-meals',
+        path: 'manage-foods',
         element: (
           <PrivateRoute>
-            <MyCreatedMeals />
+            <ManageFoods/>
           </PrivateRoute>
         ),
       },

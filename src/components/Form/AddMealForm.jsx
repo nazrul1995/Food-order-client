@@ -6,13 +6,11 @@ import { imageUpload } from "../../../utils";
 import { TbFidgetSpinner } from "react-icons/tb";
 import Container from "../../components/Shared/Container";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import useRole from "../../hooks/useRole";
-import LoadingSpinner from "../Shared/LoadingSpinner";
+import Swal from "sweetalert2";
 
 const AddFoodForm = () => {
   const { user } = useAuth();
-  const axiosSecure = useAxiosSecure()
-  const [userData, isLoading] = useRole()
+  const axiosSecure = useAxiosSecure();
 
   const {
     register,
@@ -23,212 +21,279 @@ const AddFoodForm = () => {
 
   const { mutateAsync: addMeal, isPending } = useMutation({
     mutationFn: async (mealData) => {
-      const res = await axiosSecure.post(`/add-meal`, mealData);
+      const res = await axiosSecure.post("/add-meal", mealData);
       return res.data;
     },
+
     onSuccess: () => {
-      toast.success("Meal added successfully!");
+      Swal.fire({
+        title: "Success!",
+        text: "Food added successfully!",
+        icon: "success",
+        confirmButtonColor: "#84cc16",
+      });
+
       reset();
     },
+
     onError: (err) => {
-      toast.error(err?.response?.data?.message || "Failed to add meal");
+      Swal.fire({
+        title: "Error!",
+        text: err?.response?.data?.message || "Failed to add food",
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      });
     },
   });
 
   const onSubmit = async (data) => {
     const {
       foodName,
+      category,
       price,
       ingredients,
-      deliveryArea,
+      description,
       estimatedDeliveryTime,
-      chefExperience,
-      chefId,
       foodImageFile,
     } = data;
-console.log(data)
-    if (!foodImageFile || !foodImageFile[0]) {
-      toast.error("Please upload a food image",);
+
+    if (!foodImageFile?.[0]) {
+      toast.error("Please upload a food image");
       return;
     }
 
     let foodImage;
+
     try {
       foodImage = await imageUpload(foodImageFile[0]);
-    } catch (err) {
-      toast.error("Image upload failed", err.message);
+    } catch (error) {
+      Swal.fire(error.message);
       return;
     }
 
-    const newMeal = {
+    const newFood = {
       foodName: foodName.trim(),
-      chefName: user?.displayName || "Unknown Chef",
+      category,
       foodImage,
       price: Number(price),
-      averageRating: 0,
-      totalReviews: 0,
+      description: description.trim(),
       ingredients: ingredients
         .split(",")
-        .map((item) => item.trim())
-        .filter((item) => item !== ""),
-      estimatedDeliveryTime: estimatedDeliveryTime.trim(),
-      deliveryArea: deliveryArea
-        .split(",")
-        .map((item) => item.trim())
-        .filter((item) => item !== ""),
-      chefExperience: chefExperience.trim(),
-      chefId: chefId,
-      userEmail: user?.email,
+        .map((item) => item.trim()),
+      estimatedDeliveryTime,
+      averageRating: 0,
+      totalReviews: 0,
+      createdBy: user?.email,
       createdAt: new Date().toISOString(),
     };
 
-    await addMeal(newMeal);
+    await addMeal(newFood);
   };
 
-  if (isLoading) return <LoadingSpinner></LoadingSpinner>
-  console.log(userData.result.chefId)
-
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-900 to-slate-800 text-white py-16">
-      {/* Green Circle Decorations */}
-      <div className="absolute top-20 left-10 w-96 h-96 bg-lime-500 rounded-full opacity-20 blur-3xl -z-10"></div>
-      <div className="absolute bottom-20 right-20 w-80 h-80 bg-lime-400 rounded-full opacity-30 blur-3xl -z-10"></div>
+    <div className="min-h-screen bg-linear-to-b from-slate-900 to-slate-800 text-white py-8 md:py-16 relative overflow-hidden">
+      {/* Background Decorations */}
+      <div className="absolute top-20 left-10 w-72 md:w-96 h-72 md:h-96 bg-lime-500 rounded-full opacity-20 blur-3xl -z-10"></div>
+
+      <div className="absolute bottom-20 right-10 md:right-20 w-64 md:w-80 h-64 md:h-80 bg-lime-400 rounded-full opacity-30 blur-3xl -z-10"></div>
 
       <Container>
-        <h1 className="text-4xl lg:text-5xl font-bold text-center mb-12">
-          Add New Meal
-        </h1>
+        {/* Heading */}
+        <div className="text-center mb-8 md:mb-12">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold">
+            Add New Meal
+          </h1>
 
-        <div className="max-w-5xl mx-auto bg-slate-800/70 rounded-3xl shadow-2xl p-10">
+          <p className="text-gray-400 mt-3 text-sm md:text-base">
+            Create and publish a delicious meal for customers.
+          </p>
+        </div>
+
+        {/* Form Card */}
+        <div className="max-w-5xl mx-auto bg-slate-800/70 border border-slate-700 rounded-2xl md:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-10">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8"
           >
             {/* Food Name */}
-            <div className="space-y-3">
-              <label className="block text-xl font-medium">
+            <div className="space-y-2">
+              <label className="block text-base md:text-lg font-medium">
                 Food Name <span className="text-red-400">*</span>
               </label>
+
               <input
                 type="text"
-                placeholder="e.g., Spicy Chicken Biriyani"
-                className="w-full px-6 py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500 transition"
-                {...register("foodName", { required: "Food name is required" })}
+                placeholder="e.g. Spicy Chicken Burger"
+                className="w-full px-4 md:px-6 py-3 md:py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500 transition"
+                {...register("foodName", {
+                  required: "Food name is required",
+                })}
               />
-              {errors.foodName && <p className="text-red-400 text-sm">{errors.foodName.message}</p>}
+
+              {errors.foodName && (
+                <p className="text-red-400 text-sm">
+                  {errors.foodName.message}
+                </p>
+              )}
+            </div>
+
+            {/* Category */}
+            <div className="space-y-2">
+              <label className="block text-base md:text-lg font-medium">
+                Category <span className="text-red-400">*</span>
+              </label>
+
+              <select
+                className="w-full px-4 md:px-6 py-3 md:py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
+                {...register("category", {
+                  required: "Category is required",
+                })}
+              >
+                <option value="">Select Category</option>
+                <option value="Pizza">Pizza</option>
+                <option value="Burger">Burger</option>
+                <option value="Cake">Cake</option>
+                <option value="Drinks">Drinks</option>
+              </select>
+
+              {errors.category && (
+                <p className="text-red-400 text-sm">
+                  {errors.category.message}
+                </p>
+              )}
             </div>
 
             {/* Price */}
-            <div className="space-y-3">
-              <label className="block text-xl font-medium">
+            <div className="space-y-2">
+              <label className="block text-base md:text-lg font-medium">
                 Price (USD) <span className="text-red-400">*</span>
               </label>
+
               <input
                 type="number"
                 step="0.01"
                 min="0"
                 placeholder="15.99"
-                className="w-full px-6 py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
+                className="w-full px-4 md:px-6 py-3 md:py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
                 {...register("price", {
                   required: "Price is required",
-                  min: { value: 0.01, message: "Price must be greater than 0" },
+                  min: {
+                    value: 0.01,
+                    message: "Price must be greater than 0",
+                  },
                 })}
               />
-              {errors.price && <p className="text-red-400 text-sm">{errors.price.message}</p>}
+
+              {errors.price && (
+                <p className="text-red-400 text-sm">
+                  {errors.price.message}
+                </p>
+              )}
             </div>
 
             {/* Ingredients */}
-            <div className="space-y-3">
-              <label className="block text-xl font-medium">
-                Ingredients (comma separated) <span className="text-red-400">*</span>
+            <div className="space-y-2">
+              <label className="block text-base md:text-lg font-medium">
+                Ingredients <span className="text-red-400">*</span>
               </label>
+
               <input
                 type="text"
-                placeholder="Chicken, Rice, Onion, Spices, Yogurt, Ghee"
-                className="w-full px-6 py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
-                {...register("ingredients", { required: "Ingredients are required" })}
+                placeholder="Chicken, Cheese, Onion, Tomato"
+                className="w-full px-4 md:px-6 py-3 md:py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
+                {...register("ingredients", {
+                  required: "Ingredients are required",
+                })}
               />
-              {errors.ingredients && <p className="text-red-400 text-sm">{errors.ingredients.message}</p>}
+
+              {errors.ingredients && (
+                <p className="text-red-400 text-sm">
+                  {errors.ingredients.message}
+                </p>
+              )}
             </div>
 
-            {/* Estimated Delivery Time */}
-            <div className="space-y-3">
-              <label className="block text-xl font-medium">
-                Estimated Delivery Time <span className="text-red-400">*</span>
+            {/* Delivery Time */}
+            <div className="space-y-2">
+              <label className="block text-base md:text-lg font-medium">
+                Estimated Delivery Time{" "}
+                <span className="text-red-400">*</span>
               </label>
+
               <input
                 type="text"
-                placeholder="45 minutes"
-                className="w-full px-6 py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
-                {...register("estimatedDeliveryTime", { required: "Required" })}
+                placeholder="45 Minutes"
+                className="w-full px-4 md:px-6 py-3 md:py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
+                {...register("estimatedDeliveryTime", {
+                  required: "Delivery time is required",
+                })}
               />
+
+              {errors.estimatedDeliveryTime && (
+                <p className="text-red-400 text-sm">
+                  {errors.estimatedDeliveryTime.message}
+                </p>
+              )}
             </div>
 
-            {/* Chef Experience */}
-            <div className="space-y-3">
-              <label className="block text-xl font-medium">
-                Chef Experience <span className="text-red-400">*</span>
+            {/* Description */}
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-base md:text-lg font-medium">
+                Description <span className="text-red-400">*</span>
               </label>
-              <input
-                type="text"
-                placeholder="10 years specializing in South Asian cuisine"
-                className="w-full px-6 py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
-                {...register("chefExperience", { required: "Required" })}
-              />
-            </div>
 
-            {/* Chef ID */}
-            <div className="space-y-3">
-              <label className="block text-xl font-medium">
-                Chef ID <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                className="w-full px-6 py-4 cursor-not-allowed bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
-                readOnly
-                value={userData.result?.chefId || ""}
-                {...register("chefId", { required: false })}
-              />
-              {errors.chefId && <p className="text-red-400 text-sm">{errors.chefId.message}</p>}
-            </div>
-            {/* Delivery Area */}
-            <div className="space-y-3 md:col-span-2">
-              <label className="block text-xl font-medium">
-                Delivery Area <span className="text-red-400">*</span>
-              </label>
               <textarea
-                rows={4}
-                placeholder="Dhaka, Chittagong, Khulna, Rajshahi, Sylhet"
-                className="w-full px-6 py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
-                {...register("deliveryArea", { required: "Delivery area is required" })}
+                rows={5}
+                placeholder="Describe your delicious meal..."
+                className="w-full px-4 md:px-6 py-3 md:py-4 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-lime-500"
+                {...register("description", {
+                  required: "Description is required",
+                })}
               />
-              {errors.deliveryArea && <p className="text-red-400 text-sm">{errors.deliveryArea.message}</p>}
+
+              {errors.description && (
+                <p className="text-red-400 text-sm">
+                  {errors.description.message}
+                </p>
+              )}
             </div>
-            {/* Food Image Upload */}
-            <div className="space-y-3 md:col-span-2">
-              <label className="block text-xl font-medium">
+
+            {/* Food Image */}
+            <div className="space-y-2 md:col-span-2">
+              <label className="block text-base md:text-lg font-medium">
                 Food Image <span className="text-red-400">*</span>
               </label>
+
               <input
                 type="file"
                 accept="image/*"
-                className="w-full file:mr-6 file:py-4 file:px-8 file:rounded-xl file:border-0 file:bg-lime-500/20 file:text-lime-400 hover:file:bg-lime-500/30 file:cursor-pointer"
-                {...register("foodImageFile", { required: "Food image is required" })}
+                className="w-full text-sm file:mr-2 md:file:mr-6 file:py-2 md:file:py-4 file:px-4 md:file:px-8 file:rounded-xl file:border-0 file:bg-lime-500/20 file:text-lime-400 hover:file:bg-lime-500/30 file:cursor-pointer"
+                {...register("foodImageFile", {
+                  required: "Food image is required",
+                })}
               />
-              {errors.foodImageFile && <p className="text-red-400 text-sm">{errors.foodImageFile.message}</p>}
-              <p className="text-sm text-gray-400 mt-2">High-quality image recommended</p>
+
+              {errors.foodImageFile && (
+                <p className="text-red-400 text-sm">
+                  {errors.foodImageFile.message}
+                </p>
+              )}
+
+              <p className="text-xs md:text-sm text-gray-400">
+                Upload a high-quality food image.
+              </p>
             </div>
 
             {/* Submit Button */}
-            <div className="md:col-span-2 text-center">
+            <div className="md:col-span-2">
               <button
                 type="submit"
                 disabled={isPending}
-                className="px-16 py-6 bg-lime-500 text-black font-bold text-2xl rounded-xl hover:bg-lime-400 transition shadow-xl disabled:opacity-70"
+                className="w-full md:w-auto px-6 md:px-16 py-3 md:py-4 bg-lime-500 text-black font-bold text-lg md:text-2xl rounded-xl hover:bg-lime-400 transition shadow-xl disabled:opacity-70 flex items-center justify-center mx-auto"
               >
                 {isPending ? (
                   <span className="flex items-center gap-3">
-                    <TbFidgetSpinner className="animate-spin" />
+                    <TbFidgetSpinner className="animate-spin text-2xl" />
                     Adding Meal...
                   </span>
                 ) : (
@@ -244,3 +309,4 @@ console.log(data)
 };
 
 export default AddFoodForm;
+

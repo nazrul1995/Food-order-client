@@ -4,7 +4,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import useAuth from '../../../hooks/useAuth'
 import { TbStarFilled } from 'react-icons/tb'
-import UpdateMealModal from './UpdateMealModal'
+import UpdateMealModal from '../Admin/UpdateMealModal'
 
 const MyCreatedMeals = () => {
   const { user } = useAuth()

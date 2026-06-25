@@ -1,33 +1,50 @@
-import { BsFingerprint } from 'react-icons/bs'
-import { GrUserAdmin } from 'react-icons/gr'
-import MenuItem from './MenuItem'
-import { useState } from 'react'
-import BecomeSellerModal from '../../../Modal/BecomeSellerModal'
-import { HistoryIcon, UserCheck2Icon } from 'lucide-react'
-const CustomerMenu = () => {
-  const [isOpen, setIsOpen] = useState(false)
+import {
+  BsFingerprint
+} from 'react-icons/bs'
 
-  const closeModal = () => {
-    setIsOpen(false)
-  }
+import {
+  HistoryIcon,
+  HeartIcon,
+  ShoppingBagIcon,
+  CreditCardIcon,
+  UserIcon
+} from 'lucide-react'
+
+import MenuItem from './MenuItem'
+
+
+const CustomerMenu = () => {
 
   return (
     <>
-      <MenuItem icon={BsFingerprint} label='My Orders' address='my-orders' />
-      <MenuItem icon={BsFingerprint} label='My Review' address='customer-review' />
-      <MenuItem icon={UserCheck2Icon} label='My Favorites' address='customer-favorites' />
-      <MenuItem icon={HistoryIcon} label='Payment History' address='payment-history' />
+      {/* Customer Orders */}
+      <MenuItem
+        icon={ShoppingBagIcon}
+        label="My Orders"
+        address="my-orders"
+      />
 
-      <div
-        onClick={() => setIsOpen(true)}
-        className='flex items-center px-4 py-2 mt-5  transition-colors duration-300 transform text-gray-600  hover:bg-gray-300   hover:text-gray-700 cursor-pointer'
-      >
-        <GrUserAdmin className='w-5 h-5' />
+      {/* Payment History */}
+      <MenuItem
+        icon={CreditCardIcon}
+        label="Payment History"
+        address="payment-history"
+      />
 
-        <span className='mx-4 font-medium'>Become A Seller</span>
-      </div>
+      {/* Favourite Foods */}
+      <MenuItem
+        icon={HeartIcon}
+        label="My Favorites"
+        address="customer-favorites"
+      />
 
-      <BecomeSellerModal closeModal={closeModal} isOpen={isOpen} />
+      {/* Reviews */}
+      <MenuItem
+        icon={BsFingerprint}
+        label="My Reviews"
+        address="customer-review"
+      />
+
     </>
   )
 }

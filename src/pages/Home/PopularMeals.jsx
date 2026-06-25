@@ -3,6 +3,7 @@ import axios from 'axios';
 import Container from '../../components/Shared/Container';
 import { Link } from 'react-router';
 import { FaStar, FaClock, FaFire } from 'react-icons/fa';
+import { TbClock, TbStarFilled } from 'react-icons/tb';
 
 const PopularMeals = () => {
   const { data: meals = [], isLoading } = useQuery({
@@ -31,59 +32,77 @@ const PopularMeals = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {meals.map((meal, index) => (
-            <div
-              key={meal._id || index}
-              className="group bg-slate-800 rounded-2xl overflow-hidden shadow-xl border border-slate-700/50 hover:border-orange-400/50 transition-all duration-300"
-            >
-              {/* Image */}
-              <div className="relative overflow-hidden">
-                <img
-                  src={meal.foodImage || 'https://via.placeholder.com/300x200'}
-                  alt={meal.foodName}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+         {meals?.map((meal, index) => {
+  const {
+    _id,
+    foodName = "Untitled Recipe",
+    chefName = "Local Chef",
+    foodImage,
+    price = 0,
+    averageRating = 0,
+    estimatedDeliveryTime = "30",
+  } = meal || {};
 
-                {/* Rating Badge */}
-                <div className="absolute top-3 left-3 flex items-center gap-1 bg-black/70 px-2 py-1 rounded-full text-white text-sm">
-                  <FaStar className="text-yellow-400" />
-                  <span>{meal.averageRating || 0}</span>
-                </div>
+  return (
+    <div
+      key={_id || index}
+      className="group bg-slate-900/40 backdrop-blur-sm border border-slate-800/80 rounded-2xl overflow-hidden transition-all duration-300 hover:border-slate-700 hover:bg-slate-900 shadow-xl"
+    >
+      {/* Visual Header / Image Container */}
+      <div className="relative h-48 overflow-hidden bg-slate-950">
+        <img
+          src={foodImage || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&auto=format&fit=crop&q=60"}
+          alt={foodName}
+          className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+        />
+        
+        {/* Ambient Vignette Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
 
-                {/* Popular Badge */}
-                <div className="absolute top-3 right-3 bg-orange-500 text-black px-2 py-1 rounded-full text-xs font-bold">
-                  🔥 Popular
-                </div>
-              </div>
+        {/* Flat Compact Rating Badge */}
+        <div className="absolute top-3 left-3 flex items-center gap-1 bg-slate-950/70 border border-slate-800/40 px-2.5 py-1 rounded-xl text-white text-xs font-bold backdrop-blur-md">
+          <TbStarFilled className="text-amber-400 text-xs" />
+          <span>{Number(averageRating).toFixed(1)}</span>
+        </div>
 
-              {/* Content */}
-              <div className="p-4">
-                <h3 className="text-lg font-bold text-white mb-1 truncate">
-                  {meal.foodName}
-                </h3>
-                <p className="text-gray-400 text-sm mb-2">by {meal.chefName}</p>
+        {/* Flat Compact Popularity Badge */}
+        <div className="absolute top-3 right-3 bg-orange-500/10 border border-orange-500/20 text-orange-400 px-2.5 py-1 rounded-xl text-xs font-bold backdrop-blur-md tracking-tight">
+          🔥 Popular
+        </div>
+      </div>
 
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-1">
-                    <FaClock className="text-orange-400 text-sm" />
-                    <span className="text-gray-400 text-sm">
-                      {meal.estimatedDeliveryTime || '30'} min
-                    </span>
-                  </div>
-                  <span className="text-lg font-bold text-lime-400">
-                    ${meal.price}
-                  </span>
-                </div>
+      {/* Structured Content Block */}
+      <div className="p-5 space-y-4">
+        <div className="space-y-1">
+          <h3 className="text-base font-bold text-white tracking-tight truncate group-hover:text-lime-400 transition-colors">
+            {foodName}
+          </h3>
+          <p className="text-slate-400 text-xs font-medium">
+            by <span className="text-slate-200 font-semibold">{chefName}</span>
+          </p>
+        </div>
 
-                <Link to={`/meals/${meal._id}`}>
-                  <button className="w-full py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold rounded-lg hover:from-orange-400 hover:to-red-400 transition-all duration-300 transform hover:scale-105">
-                    Order Now
-                  </button>
-                </Link>
-              </div>
-            </div>
-          ))}
+        {/* Logistics & Price Row */}
+        <div className="flex items-center justify-between pt-1 border-t border-slate-900">
+          <div className="flex items-center gap-1.5 text-slate-400 text-xs font-semibold">
+            <TbClock className="text-orange-400 text-sm" />
+            <span className="tracking-wide">{estimatedDeliveryTime} min transit</span>
+          </div>
+          <span className="text-base font-black text-lime-400 tracking-tight">
+            ${Number(price).toFixed(2)}
+          </span>
+        </div>
+
+        {/* Action Router Link Button */}
+        <Link to={`/meals/${_id}`} className="block pt-1">
+          <button className="w-full py-2.5 bg-slate-950 hover:bg-lime-400 border border-slate-800 hover:border-lime-400 text-slate-300 hover:text-slate-950 font-bold text-xs rounded-xl tracking-wide transition-all duration-300 active:scale-[0.98]">
+            Order Kitchen Delivery
+          </button>
+        </Link>
+      </div>
+    </div>
+  );
+})}
         </div>
 
         <div className="text-center mt-12">
