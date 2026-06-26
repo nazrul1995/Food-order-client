@@ -63,7 +63,6 @@ const Sidebar = () => {
               
               {userData?.role === "admin" && <AdminMenu />}
               {userData?.role === "customer" && <CustomerMenu />}
-              {/* {userData?.role === "chef" && <SellerMenu />} */}
             </nav>
           </div>
 

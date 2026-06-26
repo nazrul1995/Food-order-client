@@ -38,8 +38,8 @@ const CustomerReview = ({ meal, refetchMeal }) => {
       setShowForm(false)
       setRating(0)
       setComment('')
-      refetchReviews()        // Reviews update
-      refetchMeal()           // Meal averageRating update in real-time
+      refetchReviews()        
+      refetchMeal()           
 
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {

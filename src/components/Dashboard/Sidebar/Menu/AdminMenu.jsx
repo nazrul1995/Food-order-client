@@ -33,21 +33,9 @@ const AdminMenu = () => {
       />
 
       <MenuItem
-        icon={MdOutlineUpdate}
-        label="Update Order Status"
-        address="update-order-status"
-      />
-
-      <MenuItem
         icon={MdPeople}
         label="Customers"
-        address="customers"
-      />
-
-      <MenuItem
-        icon={MdPayment}
-        label="Payment Status"
-        address="payment-status"
+        address="manage-customers"
       />
 
     </>

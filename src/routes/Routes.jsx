@@ -4,12 +4,9 @@ import Login from '../pages/Login/Login'
 import SignUp from '../pages/SignUp/SignUp'
 import PrivateRoute from './PrivateRoute'
 import DashboardLayout from '../layouts/DashboardLayout'
-import ManageUsers from '../pages/Dashboard/Admin/ManageUsers'
 import Profile from '../pages/Dashboard/Common/Profile'
 import Statistics from '../pages/Dashboard/Common/Statistics'
 import MainLayout from '../layouts/MainLayout'
-//import MyInventory from '../pages/Dashboard/Seller/MyInventory'
-import ManageOrders from '../pages/Dashboard/Seller/ManageOrders'
 import MyOrders from '../pages/Dashboard/Customer/MyOrders'
 import { createBrowserRouter } from 'react-router'
 import AddMeal from '../pages/Dashboard/Seller/AddMeal'
@@ -23,8 +20,9 @@ import AllChefs from '../pages/Chefs/AllChefs'
 import ChefDetails from '../pages/Chefs/ChefDetails'
 import CustomerReviewDataRow from '../components/Dashboard/TableRows/CustomerReviewDataRow'
 import FavoriteMeals from '../components/Dashboard/TableRows/CustomerFavoriteData'
-import ManageRequests from '../pages/Dashboard/Admin/ManageRequests'
 import ManageFoods from '../pages/Dashboard/Admin/ManageFoods'
+import AllOrders from '../pages/Dashboard/Admin/ManageOrders'
+import ManageCustomers from '../pages/Dashboard/Admin/ManageCutomers'
 
 
 export const router = createBrowserRouter([
@@ -121,19 +119,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'manage-requests',
+        path: 'manage-customers',
         element: (
           <PrivateRoute>
-            <ManageRequests />
-          </PrivateRoute>
-        ),
-      },
-
-      {
-        path: 'manage-users',
-        element: (
-          <PrivateRoute>
-            <ManageUsers />
+            <ManageCustomers />
           </PrivateRoute>
         ),
       },
@@ -171,8 +160,11 @@ export const router = createBrowserRouter([
 
 
       {
-        path: 'manage-orders',
-        element: <ManageOrders />,
+        path: 'all-orders',
+        
+        element:<PrivateRoute>
+          <AllOrders/>
+        </PrivateRoute>,
       },
 
     ],

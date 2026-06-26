@@ -36,7 +36,6 @@ const Login = () => {
   const handleDemoSelect = (role) => {
     const credentials = {
       admin: { email: 'admin@gmail.com', password: 'admin@gmail.com' },
-      chef: { email: 'rahim@gmail.com', password: 'rahim@gmail.com' },
       customer: { email: 'shakil.rezala@yahoo.com', password: 'shakil.rezala@yahoo.com' }
     }
 
@@ -84,17 +83,7 @@ const Login = () => {
             >
               <TbUserShield className="text-base text-lime-400 mb-1 group-hover:scale-110 transition-transform" />
               <span className="text-[11px] font-bold tracking-tight">Admin</span>
-            </button>
-            
-            <button
-              type="button"
-              onClick={() => handleDemoSelect('chef')}
-              className="flex flex-col items-center justify-center py-2.5 px-2 bg-slate-950 border border-slate-850 hover:border-slate-700 rounded-xl transition group text-slate-300 cursor-pointer"
-            >
-              <TbToolsKitchen2 className="text-base text-emerald-400 mb-1 group-hover:scale-110 transition-transform" />
-              <span className="text-[11px] font-bold tracking-tight">Chef</span>
-            </button>
-            
+            </button>            
             <button
               type="button"
               onClick={() => handleDemoSelect('customer')}

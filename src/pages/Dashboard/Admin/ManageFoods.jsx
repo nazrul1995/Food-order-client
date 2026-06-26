@@ -132,7 +132,7 @@ const ManageFoods = () => {
       </div>
     )
   }
-
+console.log(meals)
   return (
     <div className="min-h-screen bg-linear-to-b from-slate-900 to-slate-800 text-white py-16 relative overflow-hidden">
       {/* Background Decorations */}
