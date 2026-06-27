@@ -5,6 +5,7 @@ import LoadingSpinner from '../../../components/Shared/LoadingSpinner'
 import toast from 'react-hot-toast'
 import Swal from 'sweetalert2'
 import useAxiosSecure from '../../../hooks/useAxiosSecure'
+import { useEffect } from 'react'
 
 const MyOrders = () => {
   const { user } = useAuth()
@@ -16,24 +17,57 @@ const MyOrders = () => {
       return res.data
     },
   })
+
   const handlePayment = async (order) => {
-    const paymentInfo = {
-      mealName: order.mealName,
-      price: order.price,
-      quantity: order.quantity,
-      mealId: order._id,
-      userAddress: order.userAddress,
-      customerEmail: user?.email,
+    try {
+      const { data } = await axiosSecure.post("/payhere/initiate", {
+        orderId: order._id,
+      });
+
+      const payment = {
+        sandbox: true,
+        merchant_id: data.merchantId,
+        return_url: `${window.location.origin}/dashboard/payment-success`,
+        cancel_url: `${window.location.origin}/payment-cancel`,
+        notify_url: data.notifyUrl,
+        order_id: data.orderId,
+        items: data.mealName,
+        amount: data.amount,
+        currency: data.currency,
+        hash: data.hash,
+        first_name: user.displayName || "Customer",
+        last_name: "",
+        email: user.email,
+        phone: "0771234567",
+        address: "Dhaka",
+        city: "Dhaka",
+        country: "Bangladesh",
+      };
+
+      window.payhere.startPayment(payment);
+    } catch (error) {
+      console.log(error);
+      toast.error("Payment failed");
     }
-    console.log('Payment Info:', paymentInfo);
+  };
 
-    //const token = await user.getIdToken()
+  useEffect(() => {
+    if (!window.payhere) return;
 
-    const res = await axiosSecure.post('/create-checkout-session', paymentInfo)
-    console.log(res.data.url);
-    window.location.assign(res.data.url);
-  }
+    window.payhere.onCompleted = function () {
+      toast.success("Payment Successful");
+      refetch();
+    };
 
+    window.payhere.onDismissed = function () {
+      toast.error("Payment Cancelled");
+    };
+
+    window.payhere.onError = function (error) {
+      console.log(error);
+      toast.error("Payment Failed");
+    };
+  }, []);
 
   const handleCancel = async (orderId) => {
     Swal.fire({
@@ -72,14 +106,12 @@ const MyOrders = () => {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-slate-900 to-slate-800 text-white py-16">
-      {/* Decorations */}
       <div className="absolute top-20 right-10 w-96 h-96 bg-lime-500 rounded-full opacity-20 blur-3xl -z-10"></div>
       <div className="absolute bottom-20 left-10 w-80 h-80 bg-lime-400 rounded-full opacity-30 blur-3xl -z-10"></div>
 
       <div className="container mx-auto px-6">
         <h1 className="text-4xl lg:text-5xl font-bold text-center mb-12">My Orders</h1>
 
-        {/* List Format - Fully Responsive */}
         <div className="hidden md:block">
           <div className="overflow-x-auto bg-slate-800/70 rounded-2xl shadow-2xl border border-slate-700">
             <table className="min-w-full text-sm text-left">
@@ -99,32 +131,15 @@ const MyOrders = () => {
               <tbody className="divide-y divide-slate-700">
                 {orders.map(order => (
                   <tr key={order._id} className="hover:bg-slate-700/40">
-                    {/* Meal */}
-                    <td className="px-6 py-4 font-semibold">
-                      {order.mealName}
-                    </td>
-
-                    {/* Chef */}
-                    <td className="px-6 py-4">
-                      {order.chefName || 'Local Chef'}
-                    </td>
-
-                    {/* Quantity */}
-                    <td className="px-6 py-4">
-                      {order.quantity}
-                    </td>
-
-                    {/* Total Price */}
+                    <td className="px-6 py-4 font-semibold">{order.mealName}</td>
+                    <td className="px-6 py-4">{order.chefName || 'Local Chef'}</td>
+                    <td className="px-6 py-4">{order.quantity}</td>
                     <td className="px-6 py-4 font-bold text-lime-400">
                       ${(order.price * order.quantity).toFixed(2)}
                     </td>
-
-                    {/* Order Time */}
                     <td className="px-6 py-4">
                       {new Date(order.orderTime).toLocaleString()}
                     </td>
-
-                    {/* Order Status */}
                     <td className="px-6 py-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-bold ${order.orderStatus === 'delivered'
@@ -139,8 +154,6 @@ const MyOrders = () => {
                         {order.orderStatus}
                       </span>
                     </td>
-
-                    {/* Payment Status */}
                     <td className="px-6 py-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-bold ${order.paymentStatus === 'paid'
@@ -151,8 +164,6 @@ const MyOrders = () => {
                         {order.paymentStatus}
                       </span>
                     </td>
-
-                    {/* Actions */}
                     <td className="px-6 py-4 flex gap-2 flex-wrap">
                       {order.orderStatus === 'pending' &&
                         order.paymentStatus === 'pending' && (
@@ -180,14 +191,13 @@ const MyOrders = () => {
                         </span>
                       )}
                     </td>
-
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
-        {/* MOBILE VIEW - CARD FORMAT */}
+
         <div className="block md:hidden space-y-6">
           {orders.map(order => (
             <div
@@ -201,19 +211,16 @@ const MyOrders = () => {
                   <span className="text-gray-400">Chef:</span>{' '}
                   {order.chefName || 'Local Chef'}
                 </p>
-
                 <p>
                   <span className="text-gray-400">Quantity:</span>{' '}
                   {order.quantity}
                 </p>
-
                 <p>
                   <span className="text-gray-400">Total:</span>{' '}
                   <span className="text-lime-400 font-bold">
                     ${(order.price * order.quantity).toFixed(2)}
                   </span>
                 </p>
-
                 <p>
                   <span className="text-gray-400">Order Time:</span>{' '}
                   {new Date(order.orderTime).toLocaleString()}
@@ -244,7 +251,6 @@ const MyOrders = () => {
                 </div>
               </div>
 
-              {/* ACTION BUTTONS */}
               <div className="flex gap-3 mt-4 flex-wrap">
                 {order.orderStatus === 'pending' &&
                   order.paymentStatus === 'pending' && (
@@ -275,7 +281,6 @@ const MyOrders = () => {
             </div>
           ))}
         </div>
-
       </div>
     </div>
   )
