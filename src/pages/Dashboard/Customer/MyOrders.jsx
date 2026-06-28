@@ -23,7 +23,7 @@ const MyOrders = () => {
       const { data } = await axiosSecure.post("/payhere/initiate", {
         orderId: order._id,
       });
-
+      console.log(data)
       const payment = {
         sandbox: true,
         merchant_id: data.merchantId,
@@ -43,6 +43,7 @@ const MyOrders = () => {
         city: "Dhaka",
         country: "Bangladesh",
       };
+      console.log(payment)
 
       window.payhere.startPayment(payment);
     } catch (error) {
